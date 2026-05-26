@@ -1,5 +1,5 @@
 export const apiFetch = async (endpoint, options = {}) => {
-  const token = localStorage.getItem('jwt_token');
+  const token = localStorage.getItem('token');
   
   const headers = {
     'Content-Type': 'application/json',

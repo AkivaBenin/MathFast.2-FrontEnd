@@ -47,6 +47,20 @@ export default function DashboardView() {
         }
     }, [streamData]);
 
+    useEffect(() => {
+        if (!roomId || roomId === 'pending') return;
+        fetch(`/api/rooms/${roomId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(res => {
+            if (res.ok) return res.json();
+        })
+        .then(data => {
+            if (data) setRoomState(data);
+        })
+        .catch(console.error);
+    }, [roomId, token]);
+
     const handleStartRace = async () => {
         if (isStarting) return;
         

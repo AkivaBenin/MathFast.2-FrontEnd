@@ -85,7 +85,7 @@ export default function GameView() {
             try {
                 const state = JSON.parse(streamData);
                 if (state.status === 'FINISHED') {
-                    navigate('/dashboard', { replace: true });
+                    navigate('/podium', { replace: true });
                     return;
                 }
                 // Immutable optimization clone to bypass cascading bottlenecks
@@ -214,13 +214,27 @@ export default function GameView() {
                 {/* Secure isolated calculation interaction layout */}
                 <div className="flex-1 flex flex-col items-center justify-center w-full mt-4">
                     
-                    {/* Explicitly mock the active track junction choice for the user interaction */}
-                    <button 
-                        onClick={cycleDifficulty}
-                        className="mb-8 px-8 py-3 bg-slate-800/90 backdrop-blur-md rounded-full border-2 border-slate-500 text-sm font-black uppercase tracking-widest hover:bg-slate-700 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,0,0,0.5)] z-20"
-                    >
-                        Toggle Path Route
-                    </button>
+                    <div className="flex gap-4 mb-8 z-20">
+                        <button 
+                            onClick={cycleDifficulty}
+                            className="px-8 py-3 bg-slate-800/90 backdrop-blur-md rounded-full border-2 border-slate-500 text-sm font-black uppercase tracking-widest hover:bg-slate-700 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+                        >
+                            Toggle Path Route
+                        </button>
+                        <button 
+                            onClick={async () => {
+                                try {
+                                    await fetch(`/api/race/${roomId}/sabotage`, {
+                                        method: 'POST',
+                                        headers: { 'Authorization': `Bearer ${token}` }
+                                    });
+                                } catch (e) { console.error(e); }
+                            }}
+                            className="px-8 py-3 bg-purple-800/90 backdrop-blur-md rounded-full border-2 border-purple-500 text-sm font-black uppercase tracking-widest hover:bg-purple-700 active:scale-95 transition-all shadow-[0_0_20px_rgba(147,51,234,0.5)]"
+                        >
+                            Deploy Sabotage
+                        </button>
+                    </div>
 
                     <div className="w-full max-w-3xl bg-slate-800/90 backdrop-blur-2xl rounded-[3rem] p-10 md:p-20 border-[6px] border-slate-700 shadow-[0_0_60px_rgba(0,0,0,0.8)] flex flex-col items-center mb-8 relative">
                         {isSubmitting && (

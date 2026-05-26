@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-export function useEventSource(roomId, eventNames = []) {
+export function useEventSource(url, eventNames = []) {
   const [connectionStatus, setConnectionStatus] = useState('DISCONNECTED');
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [eventData, setEventData] = useState({});
@@ -14,7 +14,7 @@ export function useEventSource(roomId, eventNames = []) {
   const memoizedEventNames = JSON.stringify(eventNames);
 
   const connect = useCallback(() => {
-    if (!roomId) return;
+    if (!url) return;
 
     // Purge existing connection state before establishing a new one
     if (eventSourceRef.current) {
@@ -34,9 +34,11 @@ export function useEventSource(roomId, eventNames = []) {
 
     // Programmatically query and extract the active Guest JWT tracking token
     const token = localStorage.getItem('token') || '';
-    const url = `/api/race/${roomId}/stream?token=${encodeURIComponent(token)}`;
+    const finalUrl = url.includes('?') 
+        ? `${url}&token=${encodeURIComponent(token)}` 
+        : `${url}?token=${encodeURIComponent(token)}`;
 
-    const eventSource = new EventSource(url);
+    const eventSource = new EventSource(finalUrl);
     eventSourceRef.current = eventSource;
 
     setIsReconnecting(reconnectAttemptsRef.current > 0);
@@ -76,8 +78,21 @@ export function useEventSource(roomId, eventNames = []) {
       eventSource.addEventListener(eventName, handler);
     });
 
+    eventSource.onmessage = (event) => {
+      let parsedPayload;
+      try {
+        parsedPayload = JSON.parse(event.data);
+      } catch {
+        parsedPayload = event.data;
+      }
+      setEventData((prev) => ({
+        ...prev,
+        message: parsedPayload,
+      }));
+    };
+
     eventHandlersRef.current = handlers;
-  }, [roomId, memoizedEventNames]);
+  }, [url, memoizedEventNames]);
 
   const scheduleRecovery = useCallback(() => {
     if (reconnectTimeoutRef.current) return; // Already scheduling a recovery

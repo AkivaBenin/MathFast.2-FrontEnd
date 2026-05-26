@@ -29,13 +29,13 @@ export default function PodiumView() {
 
         const token = localStorage.getItem('token');
         const participantRaw = localStorage.getItem('participant');
-        let roomCode = 'unknown';
+        let roomId = 'unknown';
 
         if (participantRaw) {
             try {
                 const participant = JSON.parse(participantRaw);
                 // Matches the backend entity mapping structure requirement
-                roomCode = participant.roomCode || localStorage.getItem('currentRoomCode') || 'unknown';
+                roomId = participant.roomId || localStorage.getItem('currentRoomId') || 'unknown';
             } catch (e) {
                 console.error("Failed to parse participant for teardown", e);
             }
@@ -44,8 +44,8 @@ export default function PodiumView() {
         // Podium Results Mapping via Extensible REST Path Matrix
         const fetchResults = async () => {
             try {
-                // Target layout targeting GET /api/race/results/{roomCode}
-                const res = await fetch(`/api/race/results/${roomCode}`, {
+                // Target layout targeting GET /api/stats/results/{roomId}
+                const res = await fetch(`/api/stats/results/${roomId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -68,7 +68,7 @@ export default function PodiumView() {
             }
         };
 
-        if (roomCode !== 'unknown' && token) {
+        if (roomId !== 'unknown' && token) {
             fetchResults();
         } else {
             setLoading(false);

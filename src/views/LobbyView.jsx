@@ -30,9 +30,10 @@ export default function LobbyView() {
     const roomId = currentParticipant.roomId || localStorage.getItem('currentRoomId') || 'pending';
 
     // Hook integration from Phase 3 to watch lobby modifications
-    const { data: streamData, status: connectionStatus } = useEventSource(
+    const { eventData, connectionStatus } = useEventSource(
         roomId !== 'pending' ? `/api/race/${roomId}/stream` : null
     );
+    const streamData = eventData?.message;
 
     const [lockedColor, setLockedColor] = useState(null);
     const [roster, setRoster] = useState([]);
@@ -77,6 +78,23 @@ export default function LobbyView() {
         return null;
     }
 
+    const handleStartRace = async () => {
+        try {
+            const response = await fetch(`/api/rooms/${roomId}/start`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                console.error("Failed to start race");
+            }
+        } catch (error) {
+            console.error("Error starting race", error);
+        }
+    };
+
     return (
         <div className="min-h-[100dvh] w-full bg-slate-900 bg-[url('/neon-grid.svg')] bg-cover bg-center flex flex-col items-center justify-start pt-10 pb-6 font-sans text-white safe-top safe-bottom overflow-x-hidden">
             <div className="w-full max-w-md flex flex-col items-center px-4 gap-6 h-full">
@@ -85,9 +103,18 @@ export default function LobbyView() {
                     <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500 mb-2 uppercase tracking-widest drop-shadow-sm" style={{ fontFamily: "'Press Start 2P', system-ui" }}>
                         Race Grid
                     </h1>
-                    <p className="text-slate-400 font-bold tracking-widest uppercase text-sm animate-pulse">
-                        Awaiting Teacher Launch...
-                    </p>
+                    {currentParticipant.role === 'TEACHER' ? (
+                        <button 
+                            onClick={handleStartRace}
+                            className="mt-4 px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl uppercase tracking-widest shadow-lg transition-colors border-2 border-red-400 w-full"
+                        >
+                            START RACE
+                        </button>
+                    ) : (
+                        <p className="text-slate-400 font-bold tracking-widest uppercase text-sm animate-pulse">
+                            Awaiting Teacher Launch...
+                        </p>
+                    )}
                 </div>
 
                 {/* Cosmetic Matrix Shell */}

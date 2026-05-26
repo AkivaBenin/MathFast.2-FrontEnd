@@ -1,5 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import LoginView from './views/LoginView';
+import RegisterView from './views/RegisterView';
+import JoinView from './views/JoinView';
+import LobbyView from './views/LobbyView';
+import DashboardView from './views/DashboardView';
+import GameView from './views/GameView';
+import PodiumView from './views/PodiumView';
 
 function HomeDashboard() {
   return (
@@ -15,23 +22,18 @@ function HomeDashboard() {
   );
 }
 
-function RoutePlaceholder({ title }) {
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-      <h2 className="text-2xl">{title}</h2>
-    </div>
-  );
-}
-
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomeDashboard />} />
-        <Route path="/login" element={<RoutePlaceholder title="Teacher Login Interface" />} />
-        <Route path="/register" element={<RoutePlaceholder title="Guest Registration Interface" />} />
-        <Route path="/lobby" element={<RoutePlaceholder title="Multiplayer Lobby Interface" />} />
-        <Route path="/admin" element={<RoutePlaceholder title="Teacher Dashboard Interface" />} />
+        <Route path="/login" element={<LoginView />} />
+        <Route path="/register" element={<RegisterView />} />
+        <Route path="/join" element={<JoinView />} />
+        <Route path="/lobby" element={<LobbyView />} />
+        <Route path="/admin" element={<DashboardView />} />
+        <Route path="/game" element={<GameView />} />
+        <Route path="/podium" element={<PodiumView />} />
       </Routes>
     </BrowserRouter>
   );

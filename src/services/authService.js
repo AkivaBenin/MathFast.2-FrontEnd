@@ -19,16 +19,12 @@ export const authService = {
     },
 
     async loginTeacher(username, password) {
-        const params = new URLSearchParams();
-        params.append('username', username);
-        params.append('password', password);
-
         const response = await fetch('/api/auth/teacher/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: params.toString()
+            body: JSON.stringify({ username, password })
         });
 
         const data = await this.handleResponse(response);
@@ -41,16 +37,12 @@ export const authService = {
     },
 
     async registerTeacher(username, password) {
-        const params = new URLSearchParams();
-        params.append('username', username);
-        params.append('password', password);
-
         const response = await fetch('/api/auth/teacher/register', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: params.toString()
+            body: JSON.stringify({ username, password })
         });
 
         const data = await this.handleResponse(response);
