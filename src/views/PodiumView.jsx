@@ -61,10 +61,11 @@ export default function PodiumView() {
                 setLoading(false);
                 
                 // 4. Purge ephemeral race tracking variables or token caches from local storage
-                localStorage.removeItem('token');
                 localStorage.removeItem('participant');
                 localStorage.removeItem('currentRoomId');
                 localStorage.removeItem('currentRoomCode');
+                localStorage.removeItem('roomCode');
+                localStorage.removeItem('guestSession');
             }
         };
 
@@ -73,8 +74,10 @@ export default function PodiumView() {
         } else {
             setLoading(false);
             // Pristine State Reset fallback
-            localStorage.clear(); 
+            localStorage.removeItem('roomCode');
+            localStorage.removeItem('guestSession');
         }
+
 
         // --- Mandatory Cleanup Anchors: Unmount Lifecycle Deep Cleanups ---
         return () => {

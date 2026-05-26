@@ -10,7 +10,7 @@ export default function RegisterView() {
 
     useEffect(() => {
         if (hasToken) {
-            navigate('/lobby', { replace: true });
+            navigate('/dashboard', { replace: true });
         }
     }, [hasToken, navigate]);
 
@@ -30,7 +30,7 @@ export default function RegisterView() {
         
         try {
             await authService.registerTeacher(username, password);
-            navigate('/lobby', { replace: true });
+            navigate('/dashboard', { replace: true });
         } catch (error) {
             setErrorMsg(error.message);
             setIsSubmitting(false); // Re-enable for retry
